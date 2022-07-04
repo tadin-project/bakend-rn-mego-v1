@@ -6,7 +6,7 @@ export const up = function (knex) {
   return knex.schema.createTable("ms_city", (table) => {
     table.increments("city_id");
     table.string("city_kode").notNullable();
-    table.string("city_name").notNullable();
+    table.string("city_nama").notNullable();
     table.boolean("city_status").defaultTo(true);
   });
 };
