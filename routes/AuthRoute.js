@@ -1,13 +1,10 @@
 import express from "express";
+import { Login, Register } from "../controllers/index.js";
 
 const router = express.Router();
 
-router.get("/register", (req, res) => {
-  return res.status(200).send("Register");
-});
+router.post("/register", Register);
 
-router.get("/login", (req, res) => {
-  return res.status(200).send("Login");
-});
+router.post("/login", Login);
 
 export default router;
