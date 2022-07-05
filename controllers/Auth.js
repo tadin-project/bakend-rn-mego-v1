@@ -1,8 +1,49 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { db } from "../config/index.js";
 
-export const Login = (req, res) => {
-  return res.status(200).send("Login");
+export const Login = async (req, res) => {
+  const { user_name, password } = req.body;
+
+  if (!user_name || !password)
+    return res
+      .status(400)
+      .json({ status: false, msg: "Username dan password harus diisi" });
+
+  const userData = await db
+    .from("ms_user")
+    .where("user_name", "=", user_name)
+    .first();
+
+  if (!userData)
+    return res.status(400).json({
+      status: false,
+      msg: "User belum terdaftar. Silahkan Daftar terlebih dahulu",
+    });
+
+  const isMatch = await bcrypt.compare(password, userData.password);
+
+  if (!isMatch)
+    return res.status(400).json({
+      status: false,
+      msg: "Password salah",
+    });
+
+  const token = jwt.sign(
+    {
+      user_id: userData.user_id,
+    },
+    process.env.SECRET_KEY,
+    {
+      expiresIn: "2d",
+    }
+  );
+
+  return res.status(200).json({
+    status: true,
+    msg: "Login Succesfully",
+    token,
+  });
 };
 
 export const Register = async (req, res) => {
